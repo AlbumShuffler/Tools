@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Retrievers\RetrieverIds.fs" />
+    <Compile Include="Retrievers\Retrievers.fs" />
+    <Compile Include="Retrievers\DreiMetaDaten.fs" />
+    <Compile Include="Retrievers\Spotify.fs" />
+    <Compile Include="Retrievers\Amazon.fs" />
+    <Compile Include="Retrievers\Apple.fs" />
+    <Compile Include="Retrievers\YoutubeMusic.fs" />
+    <Compile Include="Retrievers\Deezer.fs" />
+    <Compile Include="Cli.fs" />
+    <Compile Include="Program.fs" />
+    <Content Include="input\source.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="input\source_small.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Argu" Version="6.2.5" />
+    <PackageReference Include="FSharp.Control.TaskSeq" Version="0.4.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+    <PackageReference Include="SpotifyAPI.Web" Version="7.2.1" />
+    <PackageReference Include="SpotifyAPI.Web.Auth" Version="7.2.1" />
+    <PackageReference Include="YouTubeMusicAPI" Version="2.2.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\shared\AlbumShuffler.Shared.fsproj" />
+  </ItemGroup>
+
+</Project>
