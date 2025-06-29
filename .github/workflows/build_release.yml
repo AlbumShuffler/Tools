@@ -37,6 +37,7 @@ jobs:
 
       - name: Archive published files
         run: |
+          tree
           cd ./publish/${{ matrix.os }}
           tar -czvf ../${{ matrix.os }}.tar.gz .
 
