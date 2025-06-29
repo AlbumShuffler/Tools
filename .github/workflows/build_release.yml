@@ -37,6 +37,7 @@ jobs:
       - name: Archive published files
         run: |
           cd src/data_retriever
+          tree
           cd ./publish/${{ matrix.os }}
           tar -czvf ../data-retriever-${{ matrix.os }}.tar.gz .
 
