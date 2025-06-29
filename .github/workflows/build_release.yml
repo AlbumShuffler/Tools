@@ -1,6 +1,7 @@
 name: Build, Publish, and Release .NET App
 
 on:
+  workflow_dispatch:  # Enables manual trigger from the UI
   push:
     tags:
       - 'v*'  # Trigger the action when you push a tag (e.g., v1.0.0)
