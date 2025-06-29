@@ -16,9 +16,6 @@
     <Compile Include="Retrievers\Deezer.fs" />
     <Compile Include="Cli.fs" />
     <Compile Include="Program.fs" />
-    <Content Include="input\source.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
