@@ -18,10 +18,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up .NET 8.0
+      - name: Set up .NET 9.0
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0'  # .NET 8.0 version
+          dotnet-version: '9.0'  # .NET 9.0 version
 
       - name: Restore dependencies
         run: dotnet restore
