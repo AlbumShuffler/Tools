@@ -21,7 +21,7 @@ jobs:
       - name: Set up .NET 9.0
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0'  # .NET 9.0 version
+          dotnet-version: '9.0'
 
       - name: Restore dependencies
         run: dotnet restore
@@ -40,12 +40,13 @@ jobs:
           tree
           cd ./publish/${{ matrix.os }}
           tar -czvf ../data-retriever-${{ matrix.os }}.tar.gz .
+          tree
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: publish-data-retriever-${{ matrix.os }}
-          path: publish/data-retriever-${{ matrix.os }}.tar.gz  # Upload the .tar.gz file for this platform
+          path: src/data_retriever/publish/data-retriever-${{ matrix.os }}.tar.gz  # Upload the .tar.gz file for this platform
 
   release:
     needs: build
