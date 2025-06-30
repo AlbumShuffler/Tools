@@ -75,7 +75,7 @@ jobs:
       - name: Download build artifacts (macOS x64)
         uses: actions/download-artifact@v4
         with:
-          name: publish-date-retriever-osx-x64  # Download the macOS x64 artifact
+          name: publish-data-retriever-osx-x64  # Download the macOS x64 artifact
 
       - name: Download build artifacts (macOS ARM64)
         uses: actions/download-artifact@v4
