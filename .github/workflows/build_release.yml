@@ -29,12 +29,12 @@ jobs:
       - name: Build the project
         run: dotnet build --configuration Release
 
-      - name: Publish the application as a single file (self-contained)
+      - name: Publish as a (self-contained) single file [data-retriever]
         run: |
           cd src/data_retriever
           dotnet publish -c Release -r ${{ matrix.os }} --self-contained true /p:PublishSingleFile=true -o ./publish/${{ matrix.os }}
 
-      - name: Archive published files
+      - name: Archive published files [data-retriever]
         run: |
           cd src/data_retriever
           tree
@@ -42,7 +42,7 @@ jobs:
           tar -czvf ../data-retriever-${{ matrix.os }}.tar.gz .
           tree
 
-      - name: Upload build artifacts
+      - name: Upload build artifacts [data-retriever]
         uses: actions/upload-artifact@v4
         with:
           name: publish-data-retriever-${{ matrix.os }}
