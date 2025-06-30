@@ -60,27 +60,27 @@ jobs:
       - name: Download build artifacts (Windows)
         uses: actions/download-artifact@v4
         with:
-          name: publish-win-x64  # Download the Windows artifact
+          name: publish-data-retriever-win-x64  # Download the Windows artifact
 
       - name: Download build artifacts (Linux x64)
         uses: actions/download-artifact@v4
         with:
-          name: publish-linux-x64  # Download the Linux x64 artifact
+          name: publish-data-retriever-linux-x64  # Download the Linux x64 artifact
 
       - name: Download build artifacts (Linux ARM64)
         uses: actions/download-artifact@v4
         with:
-          name: publish-linux-arm64  # Download the Linux ARM64 artifact
+          name: publish-data-retriever-linux-arm64  # Download the Linux ARM64 artifact
 
       - name: Download build artifacts (macOS x64)
         uses: actions/download-artifact@v4
         with:
-          name: publish-osx-x64  # Download the macOS x64 artifact
+          name: publish-date-retriever-osx-x64  # Download the macOS x64 artifact
 
       - name: Download build artifacts (macOS ARM64)
         uses: actions/download-artifact@v4
         with:
-          name: publish-osx-arm64  # Download the macOS ARM64 artifact
+          name: publish-data-retriever-osx-arm64  # Download the macOS ARM64 artifact
           
       - name: List all files
         run: |
@@ -91,11 +91,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            win-x64.tar.gz
-            linux-x64.tar.gz
-            linux-arm64.tar.gz
-            osx-x64.tar.gz
-            osx-arm64.tar.gz
+            data-retriever-win-x64.tar.gz
+            data-retriever-linux-x64.tar.gz
+            data-retriever-linux-arm64.tar.gz
+            data-retriever-osx-x64.tar.gz
+            data-retriever-osx-arm64.tar.gz
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
