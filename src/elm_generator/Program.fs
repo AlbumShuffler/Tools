@@ -76,7 +76,7 @@ let main args =
         
         let combined = ("ArtistsWithAlbums.elm", artistWithAlbumsFileContent) :: ("ProviderStorage.elm", providerStorageFileContent) :: albumStorages
         
-        do combined |> writeFiles "/tmp/test"
+        do combined |> writeFiles config.OutputFolder
         
         AnsiConsole.Markup("[green]OK[/]")
         
