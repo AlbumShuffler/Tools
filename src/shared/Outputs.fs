@@ -54,6 +54,8 @@ type ArtistInfo = {
 /// Contains all audiobooks for a specific provider (Spotify, Deezer, ...)
 /// </summary>
 type Output = {
+    // we do not use DateTimeOffset here because the web app simply displays this value with a timezone hint 
+    CreationDate: System.DateTime 
     Provider: Provider
     Audiobooks: (ArtistInfo * Audiobook list) list
 }

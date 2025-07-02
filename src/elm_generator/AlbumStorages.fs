@@ -1,16 +1,18 @@
 module AlbumShuffler.ElmGenerator.AlbumStorages
 
+open System
 open AlbumShuffler.Shared
 open Scriban
 
-type OutputPair = {
+type OutputTriple = {
+    CreationDate: DateTime
     ArtistInfo: Outputs.ArtistInfo
     Audiobooks: Outputs.Audiobook seq
 }
 
 type TemplateData = {
     ProviderName: string
-    Outputs: OutputPair seq
+    Outputs: OutputTriple seq
 }
 
 let createAlbumStorage (output: Outputs.Output) =
@@ -18,8 +20,9 @@ let createAlbumStorage (output: Outputs.Output) =
         output.Audiobooks
         |> Seq.toList
         |> List.map (fun (artist, audiobooks) -> {
-                OutputPair.ArtistInfo = artist
-                OutputPair.Audiobooks = audiobooks
+                OutputTriple.CreationDate = output.CreationDate
+                OutputTriple.ArtistInfo = artist
+                OutputTriple.Audiobooks = audiobooks
             })
     {
         TemplateData.ProviderName = output.Provider.Id.Replace("_dmd", "")
@@ -47,7 +50,8 @@ artistInfo{{ output.artist_info.short_name | string.capitalize }} =
   , coverCenterX = {{ output.artist_info.cover_center_x }}
   , coverCenterY = {{ output.artist_info.cover_center_y }} 
   , altCoverCenterX = {{ if !output.artist_info.alt_cover_center_x }}Nothing{{ else }}{{ output.artist_info.alt_cover_center_x | string.replace "Some(" "Just " | string.replace ")" "" }}{{ end }} 
-  , altCoverCenterY = {{ if !output.artist_info.alt_cover_center_y }}Nothing{{ else }}{{ output.artist_info.alt_cover_center_y | string.replace "Some(" "Just " | string.replace ")" "" }}{{ end }} 
+  , altCoverCenterY = {{ if !output.artist_info.alt_cover_center_y }}Nothing{{ else }}{{ output.artist_info.alt_cover_center_y | string.replace "Some(" "Just " | string.replace ")" "" }}{{ end }}
+  , lastUpdated = "{{ output.creation_date | date.to_string "%F %R" }} MEZ/UTC+1"
   }
 
 albumStorage{{ output.artist_info.short_name | string.capitalize }} : Array Album

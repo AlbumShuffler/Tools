@@ -132,7 +132,7 @@ let operateForSingleContent (retrievers: Map<string, Retrievers.Retrievers.Retri
 /// <summary>
 /// Executes the data retrieval operation using the provided configuration.
 /// </summary>
-let operate (retrievers: Map<string, Retrievers.Retrievers.Retriever>) (ctx: ProgressContext) (config: Inputs.Config)  : Task<Result<Outputs.Output list, string list>> =
+let operate creationDate (retrievers: Map<string, Retrievers.Retrievers.Retriever>) (ctx: ProgressContext) (config: Inputs.Config)  : Task<Result<Outputs.Output list, string list>> =
     
     let getSingleContent = operateForSingleContent retrievers ctx
 
@@ -159,7 +159,8 @@ let operate (retrievers: Map<string, Retrievers.Retrievers.Retriever>) (ctx: Pro
                     |> Seq.map (fun result -> result.Artist, result.Audiobooks)
                     |> List.ofSeq
                 let provider = providerId |> matchingProvider
-                { Outputs.Output.Provider = provider
+                { Outputs.Output.CreationDate = creationDate
+                  Outputs.Output.Provider = provider
                   Outputs.Output.Audiobooks = audiobooks })
             |> List.ofSeq
             
@@ -249,12 +250,14 @@ let main args =
         let! _ = match source |> Inputs.validateConfig with Some error -> Error [error] | _ -> Ok ()
         do writeOk ()
         
+        // We want the creation time to be the same for all files so we define it here
+        let creationDate = DateTime.Now
         let operation =
             AnsiConsole.Progress()
                 .AutoClear(false)
                 .HideCompleted(false)
                 .Columns([|TaskDescriptionColumn() :> ProgressColumn; SpinnerColumn() :> ProgressColumn; ElapsedTimeColumn() :> ProgressColumn|])
-                .StartAsync<Result<Outputs.Output list, string list>>(fun ctx -> (operate retrievers ctx source))
+                .StartAsync<Result<Outputs.Output list, string list>>(fun ctx -> (operate creationDate retrievers ctx source))
                 
         let! items = operation
         
