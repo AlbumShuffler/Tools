@@ -3,7 +3,7 @@ This repository contains a self-contained dotnet application to automatically re
 
 Using this tool does not require the dotnet sdk or runtime! Download the latest release (pre-built for Linux, Mac & Windows) and run it. The downloads contain self-contained binaries meaning they do not have any external dependencies.
 
-## Usage
+## Retrieving metadata
 
 ### Spotify Access
 In order to retrieve data from the Spotify Web API you need a Spotify account. Go to [Spotify for Developers](https://developer.spotify.com/), login and create a new app. This will give you a `client_id` and a `client_secret`. These two values allow you to create an access token that needs to be send with every request to the api. This project does not need access to user or user profile data.
@@ -150,3 +150,12 @@ To generate new album data run the following command:
 ./AlbumShuffler.DataRetriever $SPOTIFY_CLIENT_ID $SPOTIFY_CLIENT_SECRET $INPUT_FILE $OUTPUT_DIR
 ```
 Running the app will remove the given output folder and recreate it to make sure its empty.
+
+## Generating Elm source files
+The second step is to create Elm sources from the retrieved data. These files are required to build the Elm app so this step needs to be done before you try to build the web app :)
+```
+./AlbumShuffler.ElmGenerator $INPUT_DIR $OUTPUT_DIR
+```
+The first parameter is the path to the directory that you used as output in the previous step. The output directy is the `src` folder of the Elm app.
+
+See the [frontend repository](https://github.com/AlbumShuffler/Frontend) for instructions how to build it.
