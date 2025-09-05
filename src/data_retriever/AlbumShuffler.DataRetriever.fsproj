@@ -21,7 +21,7 @@
   <ItemGroup>
     <PackageReference Include="Argu" Version="6.2.5" />
     <PackageReference Include="FSharp.Control.TaskSeq" Version="0.4.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageReference Include="SpotifyAPI.Web" Version="7.2.1" />
     <PackageReference Include="SpotifyAPI.Web.Auth" Version="7.2.1" />
     <PackageReference Include="YouTubeMusicAPI" Version="2.2.8" />

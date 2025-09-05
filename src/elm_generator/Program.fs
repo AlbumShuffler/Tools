@@ -44,8 +44,8 @@ let writeFiles (baseDir: string) (filesWithContent: (string * string) list) : un
                 IO.File.WriteAllText(filename, content))
     with
     | exn -> failwith $"Could not write output files because: %s{exn.Message}"
-    
-    
+
+
 [<EntryPoint>]
 let main args =
     result {
@@ -59,7 +59,7 @@ let main args =
                 |> List.map parseJsonData
                 |> List.sequenceResultA
                 |> Result.mapError (fun errors -> String.Join(Environment.NewLine, errors)))
-                |> Result.map (List.sortBy _.Provider.Name)
+            |> Result.map (List.sortBy _.Provider.Name)
         
         let artistWithAlbumsTemplate = Template.Parse(ArtistsWithAlbums.template)
         let artistWithAlbumsData = input |> ArtistsWithAlbums.mapOutputsToTemplateData

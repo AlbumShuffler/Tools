@@ -210,19 +210,6 @@ let writeToOutputFiles (outputFolder: string) (outputs: Outputs.Output list) : R
     with
     | ex -> Error $"Failed to write output files: {ex.Message}"
     
-    
-    (*
-let sortOutputByPriority (output: Outputs.Output) (config: Config.) =
-    let sortedAudiobooks =
-        output.Audiobooks
-        |> Map.toList
-        |> List.sortBy (fun (artist, _) ->
-            let originalContent = config.Content |> List.find (fun c -> c.ShortName = artist.ShortName)
-            originalContent.Priority)
-        |> Map.ofList
-    { output with Audiobooks = sortedAudiobooks }
-    *)
-    
 
 [<EntryPoint>]
 let main args =
@@ -262,7 +249,11 @@ let main args =
         let! items = operation
         
         do "Enriching DreiMetadaten data with Spotify image data" |> writeInfo
-        let! enrichedItems = items |> mergeSpotifyImagesIntoDreiMetadaten
+        let! enrichedItems =
+            if items |> List.exists (fun item -> item.Provider.Id = "spotify") then items |> mergeSpotifyImagesIntoDreiMetadaten
+            else
+                printf " (skipped because no Spotify data was retrieved)"
+                items |> Ok
         do writeOk ()
         
         do "Writing retrieved data to files" |> writeInfo

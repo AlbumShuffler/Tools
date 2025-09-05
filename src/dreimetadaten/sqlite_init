@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+FILE="db.sql"
+URL="https://github.com/YourMJK/dreimetadaten/raw/refs/heads/master/metadata/db.sql"
+
+if [ ! -f "$FILE" ]; then
+    echo "File not found. Downloading from $URL..."
+    curl -L -o "$FILE" "$URL"
+fi
+
+rm -rf db.sqlite
+sqlite3 db.sqlite < db.sql

@@ -37,6 +37,10 @@ type DdfSpezial = {
     Spezial: DreiMetadatenAlbum list
 }
 
+type DdfShort = {
+    Kurzgeschichten: DreiMetadatenAlbum list
+}
+
 type DdfKSerie = {
     Kids: DreiMetadatenAlbum list
 }
@@ -45,6 +49,8 @@ type DdfKSerie = {
 let private regularDdfJsonUrl = "https://dreimetadaten.de/data/Serie.json"
 [<Literal>]
 let private specialDdfJsonUrl = "https://dreimetadaten.de/data/Spezial.json"
+[<Literal>]
+let private shortDdfJsonUrl = "https://dreimetadaten.de/data/Kurzgeschichten.json"
 [<Literal>]
 let private regularDdfKJsonUrl = "https://dreimetadaten.de/data/Kids.json"
 [<Literal>]
@@ -70,7 +76,8 @@ let getAllDdfAlbums =
                 if cache.IsEmpty then
                     let! regulars = regularDdfJsonUrl |> downloadAndParse<DdfSerie> _.Serie
                     let! specials = specialDdfJsonUrl |> downloadAndParse<DdfSpezial> _.Spezial
-                    do cache <- regulars @ specials
+                    let! shorts = shortDdfJsonUrl |> downloadAndParse<DdfShort> _.Kurzgeschichten
+                    do cache <- regulars @ specials @ shorts
                 return cache |> Ok
             with
             | exn -> return exn.Message |> Error
@@ -92,8 +99,13 @@ let getAllDdfKAlbum =
     
     
 let albumAsContent (url: string) (album: DreiMetadatenAlbum) : Outputs.Audiobook =
+    // We do not want to put workarounds in the `Outputs.Audiobook` record so we put
+    // a workaround in the id field itself. It is filled with the id of the DMD project
+    // (which is later required to properly match their sqlite database) and the Spotify
+    // id that is used in a later step to add images from the Spotify cdn
     let id =
         album.Ids.Spotify
+        |> Option.map (fun spotifyId -> $"%i{album.Ids.Dreimetadaten}||%s{spotifyId}")
         |> Option.defaultWith (fun () -> failwithf $"Audiobook '%s{album.Titel}' does not have a Spotify id")
         
     let images =
@@ -113,6 +125,8 @@ let albumAsContent (url: string) (album: DreiMetadatenAlbum) : Outputs.Audiobook
     }
     
     
+// We do not want to take resources from the DMD project, so we hardcode the urls
+// of the proper images from Spotify
 let private DdfkImages : Outputs.Image list = [
     { Url = "https://i.scdn.co/image/ab6761610000e5eb4b258838de4271df70886fb8"
       Height = 640
@@ -125,6 +139,8 @@ let private DdfkImages : Outputs.Image list = [
       Width = 160 } ]
 
 
+// We do not want to take resources from the DMD project, so we hardcode the urls
+// of the proper images from Spotify
 let private DdfImages : Outputs.Image list = [
       { Url = "https://i.scdn.co/image/ab6761610000e5eb7de827ab626c867816052015"
         Height = 640
