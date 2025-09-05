@@ -86,10 +86,11 @@ module RetrievalResults =
 
     let errorResponseAsApiError (error: DeezerErrorResponse) : ApiError =
         match error.Error.Code with
-        | 4   -> Quota
         | 100 -> ItemsLimitExceeded
         | 200 -> Permission
         | 300 -> TokenInvalid
+        | 403 -> Quota
+        | 429 -> Quota
         | 500 -> Parameter
         | 501 -> ParameterMissing
         | 600 -> QueryInvalid
