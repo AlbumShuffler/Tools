@@ -52,18 +52,34 @@ let parseInput (json: string) : Result<Inputs.Config, string> =
 
 
 let mergeSpotifyImages (spotify: Outputs.Audiobook list) otherProvider (other: Outputs.Audiobook list) : Result<Outputs.Audiobook list, string list> =
-    other
-    |> List.map (fun book ->
+    
+    let tryMatchRegular (book: Outputs.Audiobook) : Result<Outputs.Audiobook, string> =
         let s = spotify |> List.tryFind (fun sb -> String.Equals(sb.Id, book.Id, StringComparison.InvariantCultureIgnoreCase))
         match s with
         | Some spotifyBook -> Ok { book with Images = spotifyBook.Images }
         | None ->
             // Use the fallback image given by DieDreiMetadaten (which is usually huge!)
             if book.Images.IsEmpty then
-                Error $"Could not find matching audiobook in Spotify data for %s{book.Name} (%s{book.Id}) (Provider: %s{otherProvider})"
-            else Ok book)
+                Error $"Could not find matching regular audiobook in Spotify data for %s{book.Name} (%s{book.Id}) (Provider: %s{otherProvider})"
+            else Ok book
+    
+    let tryMatchSpecial (book: Outputs.Audiobook) : Result<Outputs.Audiobook, string> =
+        let bookName = book.Name.ToLowerInvariant()
+        match spotify |> List.tryFind _.Name.ToLowerInvariant().Contains(bookName) with
+        | Some spotifyBook -> Ok { book with Images = spotifyBook.Images }
+        | None ->
+            // Use the fallback image given by DieDreiMetadaten (which is usually huge!)
+            if book.Images.IsEmpty then
+                Error $"Could not find matching special audiobook in Spotify data for %s{book.Name} (%s{book.Id}) (Provider: %s{otherProvider})"
+            else Ok book
+            
+    other
+    |> List.map (fun book ->
+        book
+        |> tryMatchRegular
+        |> Result.orElseWith (fun _ -> book |> tryMatchSpecial))
     |> List.sequenceResultA
-
+    
 
 let mergeSpotifyImagesIntoDreiMetadatenStep (spotify: Outputs.Output) (otherOutput: Outputs.Output) : Result<Outputs.Output, string list> =
     let findMatchingSpotifyBooks (artist: Outputs.ArtistInfo) =
