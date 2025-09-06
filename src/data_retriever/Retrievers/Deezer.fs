@@ -86,11 +86,9 @@ module RetrievalResults =
 
     let errorResponseAsApiError (error: DeezerErrorResponse) : ApiError =
         match error.Error.Code with
-        | 100 -> ItemsLimitExceeded
+        | 4   -> ItemsLimitExceeded
         | 200 -> Permission
         | 300 -> TokenInvalid
-        | 403 -> Quota
-        | 429 -> Quota
         | 500 -> Parameter
         | 501 -> ParameterMissing
         | 600 -> QueryInvalid
@@ -279,15 +277,21 @@ let performRateLimitAwareRequest (url: string) : Task<RetrievalResults.Retrieval
         task {
             if counter >= maximumNumberOfRetries then return RetrievalResults.RetrievalResult.RetriesExceeded
             else
-                let! response = url |> client.GetStringAsync
-                match response |> tryParseAsError with
-                | Some RetrievalResults.Quota ->
+                let! response = url |> client.GetAsync
+                let shouldRetry = (response.StatusCode |> int) = 403 || (response.StatusCode |> int) = 429
+                if shouldRetry then
                     do! Task.Delay(retryDelay)
                     return! step (counter + 1)
-                | Some otherError ->
-                    return (otherError |> RetrievalResults.RetrievalResult.ApiError)
-                | None ->
-                    return response |> RetrievalResults.RetrievalResult.Response
+                else
+                    let! body = response.Content.ReadAsStringAsync ()
+                    match body |> tryParseAsError with
+                    | Some RetrievalResults.Quota ->
+                        do! Task.Delay(retryDelay)
+                        return! step (counter + 1)
+                    | Some otherError ->
+                        return (otherError |> RetrievalResults.RetrievalResult.ApiError)
+                    | None ->
+                        return body |> RetrievalResults.RetrievalResult.Response
         }
     step 1
     
@@ -325,7 +329,7 @@ let retrieveAlbumDataForArtist (artistId: string) : Task<RetrievalResults.Retrie
                     return RetrievalResults.InvalidJson error
                 | RetrievalResults.RetriesExceeded ->
                     return RetrievalResults.RetriesExceeded
-                | RetrievalResults.TwinResult (left, right) ->
+                | RetrievalResults.TwinResult _ ->
                     return failwith "not implemented since its unnecessary"
                 | RetrievalResults.RetrievalResult.Unknown error ->
                     return RetrievalResults.RetrievalResult.Unknown error
@@ -418,7 +422,7 @@ let retrieveAllPlaylistTracks (playlistId: string) : Task<RetrievalResults.Retri
                     return RetrievalResults.InvalidJson error
                 | RetrievalResults.RetriesExceeded ->
                     return RetrievalResults.RetriesExceeded
-                | RetrievalResults.TwinResult (_, _) ->
+                | RetrievalResults.TwinResult _ ->
                     return failwith "not implemented since its unnecessary"
                 | RetrievalResults.RetrievalResult.Unknown error ->
                     return RetrievalResults.RetrievalResult.Unknown error                

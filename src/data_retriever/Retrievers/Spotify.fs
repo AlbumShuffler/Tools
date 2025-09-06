@@ -238,7 +238,7 @@ let retrieveDataForArtist (client: SpotifyClient) (source: Inputs.Source) : Task
     }
     
 
-let retriever (config: SpotifyConfig) (s: Inputs.Source)  : TaskResult<Intermediate.Artist * Outputs.Audiobook list, string> =
+let retriever (config: SpotifyConfig) (s: Inputs.Source) : TaskResult<Intermediate.Artist * Outputs.Audiobook list, string> =
     let mutable client: SpotifyClient option = None
     taskResult {
         if client.IsNone then
@@ -253,5 +253,3 @@ let retriever (config: SpotifyConfig) (s: Inputs.Source)  : TaskResult<Intermedi
             return! retrieveDataForShow client.Value s
         | unmatched -> return! Error $"Source type '%s{unmatched}' is not implemented for Spotify"
     }
-    
-    //System.Threading.Tasks.Task.FromResult(List.empty<Outputs.Item>)
