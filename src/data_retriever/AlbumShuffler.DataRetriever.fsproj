@@ -14,6 +14,7 @@
     <Compile Include="Retrievers\Apple.fs" />
     <Compile Include="Retrievers\YoutubeMusic.fs" />
     <Compile Include="Retrievers\Deezer.fs" />
+    <Compile Include="Retrievers\Tidal.fs" />
     <Compile Include="Cli.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

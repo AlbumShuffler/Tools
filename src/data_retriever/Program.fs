@@ -54,14 +54,16 @@ let parseInput (json: string) : Result<Inputs.Config, string> =
 let mergeSpotifyImages (spotify: Outputs.Audiobook list) otherProvider (other: Outputs.Audiobook list) : Result<Outputs.Audiobook list, string list> =
     
     let tryMatchRegular (book: Outputs.Audiobook) : Result<Outputs.Audiobook, string> =
-        let s = spotify |> List.tryFind (fun sb -> String.Equals(sb.Id, book.Id, StringComparison.InvariantCultureIgnoreCase))
+        let bookId = book.Id.Split("||", StringSplitOptions.RemoveEmptyEntries ||| StringSplitOptions.TrimEntries)[1]
+        let s = spotify |> List.tryFind (fun sb -> String.Equals(sb.Id, bookId, StringComparison.InvariantCultureIgnoreCase))
         match s with
         | Some spotifyBook -> Ok { book with Images = spotifyBook.Images }
         | None ->
             // Use the fallback image given by DieDreiMetadaten (which is usually huge!)
             if book.Images.IsEmpty then
+                Error $"Matching Spotify audiobook does not contain image data for %s{book.Name} (%s{book.Id}) (Provider: %s{otherProvider})"
+            else
                 Error $"Could not find matching regular audiobook in Spotify data for %s{book.Name} (%s{book.Id}) (Provider: %s{otherProvider})"
-            else Ok book
     
     let tryMatchSpecial (book: Outputs.Audiobook) : Result<Outputs.Audiobook, string> =
         let bookName = book.Name.ToLowerInvariant()
@@ -70,8 +72,9 @@ let mergeSpotifyImages (spotify: Outputs.Audiobook list) otherProvider (other: O
         | None ->
             // Use the fallback image given by DieDreiMetadaten (which is usually huge!)
             if book.Images.IsEmpty then
-                Error $"Could not find matching special audiobook in Spotify data for %s{book.Name} (%s{book.Id}) (Provider: %s{otherProvider})"
-            else Ok book
+                Error $"Matching Spotify audiobook does not contain image data for %s{book.Name} (%s{book.Id}) (Provider: %s{otherProvider})"
+            else
+                Error $"Could not find matching regular audiobook in Spotify data for %s{book.Name} (%s{book.Id}) (Provider: %s{otherProvider})"
             
     other
     |> List.map (fun book ->
