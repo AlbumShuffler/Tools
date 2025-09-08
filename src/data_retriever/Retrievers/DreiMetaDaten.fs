@@ -152,6 +152,18 @@ let private DdfImages : Outputs.Image list = [
         Height = 160
         Width = 160 } ]
 
+/// <summary>
+/// Removes all items from the list that should be excluded according to the filters
+/// </summary>
+/// <param name="idsToIgnore">Ids to discard</param>
+/// <param name="titlesToIgnore">List of strings, each item that contains any of the strings in its name will be removed</param>
+/// <param name="items">Items to filter</param>
+let filterItems (idsToIgnore: string list) (titlesToIgnore: string list) (items: Outputs.Audiobook list) =
+    items
+    |> List.where (fun album ->
+            (idsToIgnore |> List.contains album.Id = false) &&
+            (not <| (titlesToIgnore |> List.exists (fun toIgnore -> album.Name.Contains(toIgnore))))
+        )
 
 let retriever (source: Inputs.Source) : Task<Result<Intermediate.Artist * Outputs.Audiobook list, string>> =
     taskResult {
@@ -183,4 +195,5 @@ let retriever (source: Inputs.Source) : Task<Result<Intermediate.Artist * Output
                 |> urlSelector
                 |> Option.map (fun url -> albumAsContent url a)
             )
+            |> (filterItems source.IgnoreIds source.ItemNameFilter)
     }
