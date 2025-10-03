@@ -17,6 +17,14 @@ let serializerOptions =
 
 let deserialize<'a> (json: string) =
     JsonSerializer.Deserialize<'a>(json, serializerOptions)
+    
+
+let tryDeserialize<'a> (json: string) =
+    try
+        JsonSerializer.Deserialize<'a>(json, serializerOptions)
+        |> Ok
+    with
+    | exn -> Error exn.Message
 
 
 let serialize obj =

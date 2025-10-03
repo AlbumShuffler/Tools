@@ -27,6 +27,7 @@ type DreiMetadatenAlbum = {
     Titel: string
     Links: Links
     Ids: Ids
+    Unvollständig: bool option
 }
 
 type DdfSerie = {
@@ -180,6 +181,9 @@ let retriever (source: Inputs.Source) : Task<Result<Intermediate.Artist * Output
             | DdfkSpotifyId -> getAllDdfKAlbum()
             | s -> failwithf $"The artist/playlist/show '%s{s}' is not supported"
             
+        let completeAlbums =
+            albums |> List.where (fun a -> a.Unvollständig |> Option.defaultValue false = false)
+            
         let name, images =
             match source.ContentId with
             | DdfSpotifyId -> "Die Drei ???", DdfImages
@@ -188,7 +192,7 @@ let retriever (source: Inputs.Source) : Task<Result<Intermediate.Artist * Output
 
         return
             { Id = source.ContentId; Name = name; Images = images },
-            albums
+            completeAlbums
             // The retrieved data contains metadata of releases that are not yet available as audiobooks
             |> List.choose (fun a ->
                 a
