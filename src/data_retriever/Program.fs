@@ -197,7 +197,7 @@ let operate creationDate (retrievers: Map<string, Retrievers.Retrievers.Retrieve
     }
     
 
-let configureRetrievers (spotify: Retrievers.Spotify.SpotifyConfig) = 
+let configureRetrievers (spotify: Retrievers.Spotify.SpotifyConfig) (tidal: Retrievers.Tidal.TidalConfig)= 
     let retrieverArray : (string * Retrievers.Retrievers.Retriever) array =
         [|
         "amazon", Retrievers.Amazon.retriever
@@ -207,6 +207,7 @@ let configureRetrievers (spotify: Retrievers.Spotify.SpotifyConfig) =
         "deezer", Retrievers.Deezer.retriever
         "dmd", Retrievers.DreiMetaDaten.retriever
         "spotify", Retrievers.Spotify.retriever { ClientId = spotify.ClientId; ClientSecret = spotify.ClientSecret }
+        "tidal", Retrievers.Tidal.retriever { ClientId = tidal.ClientId; ClientSecret = tidal.ClientSecret }
         "youtube", Retrievers.YoutubeMusic.retriever
         "youtube_dmd", Retrievers.DreiMetaDaten.retriever
         |]
@@ -241,7 +242,7 @@ let main args =
     (taskResult {
         do "Trying to get cli arguments" |> writeInfo
         let! config = args |> Cli.fromCliArgument |> Result.mapError List.singleton
-        let retrievers = configureRetrievers config.SpotifyConfig
+        let retrievers = configureRetrievers config.SpotifyConfig config.TidalConfig
         do writeOk ()
         
         do "Trying to read input file" |> writeInfo
