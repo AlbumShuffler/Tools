@@ -205,7 +205,6 @@ let configureRetrievers (spotify: Retrievers.Spotify.SpotifyConfig) (tidal: Retr
         "apple", Retrievers.Apple.retriever
         "apple_dmd", Retrievers.DreiMetaDaten.retriever
         "deezer", Retrievers.Deezer.retriever
-        "dmd", Retrievers.DreiMetaDaten.retriever
         "spotify", Retrievers.Spotify.retriever { ClientId = spotify.ClientId; ClientSecret = spotify.ClientSecret }
         "tidal", Retrievers.Tidal.retriever { ClientId = tidal.ClientId; ClientSecret = tidal.ClientSecret }
         "youtube", Retrievers.YoutubeMusic.retriever
