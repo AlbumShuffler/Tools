@@ -4,6 +4,7 @@ open AlbumShuffler.ElmGenerator
 open AlbumShuffler.Shared
 open FsToolkit.ErrorHandling
 open Scriban
+open Scriban.Runtime
 open Spectre.Console
 
 let getJsonDataFromFolder folder : Result<string list, string> =
@@ -30,9 +31,20 @@ let parseJsonData json : Result<Outputs.Output, string> =
 
 let createAlbumStorageForOutput (output: Outputs.Output) : string * string =
     let albumStorageTemplate = Template.Parse(AlbumStorages.template)
-    let albumStorageDate = output |> AlbumStorages.createAlbumStorage
+    let albumStorageData = output |> AlbumStorages.createAlbumStorage
     let filename = output.Provider.Id.Replace("_dmd", "") |> (fun s -> $"{Char.ToUpperInvariant(s[0])}{s.Substring(1)}")
-    ($"AlbumStorage{filename}.elm", albumStorageTemplate.Render(albumStorageDate))
+    
+    let globals = ScriptObject()
+    do globals.Import(albumStorageData)
+    
+    let context = TemplateContext()
+    do context.RecursiveLimit <- 0
+    do context.LoopLimit <- 0
+    do context.StrictVariables <- true
+    do context.PushGlobal(globals)
+    do context.LimitToString <- 10485760 // 10mb file size limit, truncation if larger
+    
+    ($"AlbumStorage{filename}.elm", albumStorageTemplate.Render(context))
     
     
 let writeFiles (baseDir: string) (filesWithContent: (string * string) list) : unit =
