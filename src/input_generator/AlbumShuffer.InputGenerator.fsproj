@@ -13,4 +13,9 @@
     <ProjectReference Include="..\data_retriever\AlbumShuffler.DataRetriever.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="Spectre.Console" Version="0.55.2" />
+    <PackageReference Update="Spectre.Console.Json" Version="0.55.2" />
+  </ItemGroup>
+
 </Project>

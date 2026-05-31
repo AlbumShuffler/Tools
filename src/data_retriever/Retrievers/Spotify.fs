@@ -9,6 +9,7 @@ open SpotifyAPI.Web
 
 let private httpClient : HttpClient = new HttpClient()
 
+
 type SpotifyConfig = {
     ClientId: string
     ClientSecret: string
@@ -168,7 +169,7 @@ let retrieveDataForPlaylist (client: SpotifyClient) (source: Inputs.Source) : Ta
         try
             let! uncheckedPlaylist = performRateLimitAwareRequest (fun () -> source.ContentId |> client.Playlists.Get)
             let! playlist = uncheckedPlaylist |> ensureAllImageDimensionsAreSet
-            let! allTracks = performRateLimitAwareRequest (fun () -> client.PaginateAll(playlist.Tracks) |> Task.map List.ofSeq)
+            let! allTracks = performRateLimitAwareRequest (fun () -> client.PaginateAll(playlist.Items) |> Task.map List.ofSeq)
             
             let playlistTracks =
                     allTracks

@@ -14,6 +14,7 @@ type Source = {
     ItemNameFilter: string list
 }
 
+
 /// <summary>
 /// Content is an abstract definition of something that content that is available via multiple sources
 /// </summary>
@@ -30,6 +31,7 @@ type Content = {
     Sources: Source list
 }
 
+
 /// <summary>
 /// Provider configuration (Spotify, Deezer, ...) for input configurations
 /// </summary>
@@ -40,6 +42,7 @@ type Provider = {
     Logo: string
     AllowedTypes: string list
 }
+
 
 /// <summary>
 /// Configuration that holds a complete provider and content list
@@ -68,6 +71,7 @@ let checkForUnknownSources (config: Config) : string option =
                     let mergedSourceNames = String.Join(", ", content.Sources |> List.map _.ProviderId)
                     $"%s{content.ShortName} (%s{mergedSourceNames})"))
         Some $"The following content references at least one provider that is unknown: %s{mergedContent}"
+
         
 /// <summary>
 /// Checks whether a given config contains any null values as fields. This indicates an incomplete config

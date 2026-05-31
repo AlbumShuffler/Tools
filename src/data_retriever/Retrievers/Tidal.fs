@@ -47,7 +47,6 @@ type TidalAlbumCoverArt = {
             Meta: {| Width: int; Height: int |} 
         |} list
     |}
-    Relationships: {| Owners: {| Links: {| Self: string |} |} |} 
 }
 
 type TidalAlbum = {
@@ -109,7 +108,7 @@ let getAccessToken (config: TidalConfig) : TaskResult<AccessToken, string> =
             let! responseContent = response.Content.ReadAsStringAsync()
             return!
                 responseContent
-                |> System.Text.Json.JsonSerializer.Deserialize<AccessToken>
+                |> JsonSerializer.Deserialize<AccessToken>
                 |> Ok
         with
         | exn -> return! exn.Message |> Error
@@ -134,7 +133,7 @@ let createBaseRequestMessage (accessToken: AccessToken) (url: string) : HttpRequ
 /// </returns>
 let addJsonBodyToRequest<'T> (request: HttpRequestMessage) (payload: 'T) : Result<HttpRequestMessage, string> =
     try
-        let jsonString = System.Text.Json.JsonSerializer.Serialize(payload)
+        let jsonString = JsonSerializer.Serialize(payload)
         request.Content <- new StringContent(jsonString, Encoding.UTF8, "application/vnd.tidal.v1+json")
         request.Method <- HttpMethod.Post
         Ok request
